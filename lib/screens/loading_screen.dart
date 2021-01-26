@@ -1,9 +1,9 @@
-import 'dart:math';
-
+import 'package:clima/screens/location_screen.dart';
 import 'package:clima/services/location.dart';
 import 'package:clima/services/networking.dart';
 import 'package:clima/utilities/secrets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -21,41 +21,32 @@ class _LoadingScreenState extends State<LoadingScreen> {
     Location location = Location();
     await location.getCurrentLocation();
 
-    String url =
-        'https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=${kOpenWeatherApiKey}';
-
-    Networking networking = Networking(url: url);
+    Networking networking = Networking(
+      url:
+          'https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=${kOpenWeatherApiKey}&units=metric',
+    );
     var weatherData = await networking.get();
     print(weatherData);
-  }
 
-  Future getWeather() async {
-    //
-    // String cityName = weatherData['name'];
-    // int condition = weatherData['weather'][0]['id'];
-    // double temp = weatherData['main']['temp'];
-
-    // print({
-    //   cityName,
-    //   condition,
-    //   temp,
-    // });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LocationScreen(
+          weatherData: weatherData,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(Random().nextInt(100000).toString()),
-            FlatButton(
-              onPressed: this.getLocationData,
-              child: Text('Get weather'),
-            ),
-          ],
+      body: SafeArea(
+        child: Center(
+          child: SpinKitDoubleBounce(
+            color: Colors.white,
+            size: 100.0,
+          ),
         ),
       ),
     );
