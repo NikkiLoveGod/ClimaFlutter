@@ -3,9 +3,18 @@ import 'package:clima/services/networking.dart';
 import 'package:clima/utilities/secrets.dart';
 
 const String openWeatherApiURL =
-    'https://api.openweathermap.org/data/2.5/weather';
+    'https://api.openweathermap.org/data/2.5/weather?appid=${kOpenWeatherApiKey}&units=metric';
 
 class WeatherModel {
+  Future<dynamic> _getFromOpenWeatherApi(String queryParams) async {
+    Networking networking = Networking(
+      url: '${openWeatherApiURL}${queryParams}',
+    );
+
+    var weatherData = await networking.get();
+    return weatherData;
+  }
+
   Future<dynamic> getLocationWeather() async {
     Location location = Location();
     bool gotLocation = await location.getCurrentLocation();
@@ -14,14 +23,12 @@ class WeatherModel {
       return;
     }
 
-    Networking networking = Networking(
-      url:
-          '${openWeatherApiURL}?lat=${location.latitude}&lon=${location.longitude}&appid=${kOpenWeatherApiKey}&units=metric',
-    );
-    var weatherData = await networking.get();
-    print(weatherData);
+    return await this._getFromOpenWeatherApi(
+        '&lat=${location.latitude}&lon=${location.longitude}');
+  }
 
-    return weatherData;
+  Future<dynamic> getCityWeather(String cityName) async {
+    return await this._getFromOpenWeatherApi('&q=${cityName}');
   }
 
   String getWeatherIcon(int condition) {
