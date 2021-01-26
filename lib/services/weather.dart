@@ -8,7 +8,11 @@ const String openWeatherApiURL =
 class WeatherModel {
   Future<dynamic> getLocationWeather() async {
     Location location = Location();
-    await location.getCurrentLocation();
+    bool gotLocation = await location.getCurrentLocation();
+
+    if (!gotLocation) {
+      return;
+    }
 
     Networking networking = Networking(
       url:

@@ -26,6 +26,14 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void updateUI(weatherData) {
     setState(() {
+      if (weatherData == null) {
+        this.cityName = '-';
+        this.weatherIcon = '-';
+        this.temp = "-";
+        this.message = 'Could not get location or weather data.';
+        return;
+      }
+
       this.cityName = weatherData['name'];
 
       int condition = weatherData['weather'][0]['id'];
